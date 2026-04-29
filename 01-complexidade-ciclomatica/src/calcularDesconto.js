@@ -1,24 +1,24 @@
+const REGRAS_DESCONTO = [
+  { tipo: 'premium', minValor: 1000, minAnos: 6, taxa: 0.20 },
+  { tipo: 'premium', minValor: 1000, minAnos: 0, taxa: 0.15 },
+  { tipo: 'premium', minValor: 500, minAnos: 0, taxa: 0.10 },
+  { tipo: 'premium', minValor: 0, minAnos: 0, taxa: 0.05 },
+
+  { tipo: 'gold', minValor: 1000, minAnos: 0, taxa: 0.10 },
+  { tipo: 'gold', minValor: 0, minAnos: 0, taxa: 0.02 }
+];
+
 function calcularDesconto(cliente, valor) {
-  if (cliente.tipo === 'premium') {
-    if (valor > 1000) {
-      if (cliente.anosCadastro > 5) {
-        return valor * 0.20;
-      } else {
-        return valor * 0.15;
-      }
-    } else if (valor > 500) {
-      return valor * 0.10;
-    } else {
-      return valor * 0.05;
-    }
-  } else if (cliente.tipo === 'gold') {
-    if (valor > 1000) {
-      return valor * 0.10;
-    } else {
-      return valor * 0.02;
-    }
-  }
-  return 0;
+  const anosCadastro = cliente.anosCadastro ?? 0;
+
+  const regra = REGRAS_DESCONTO.find(
+    ({ tipo, minValor, minAnos }) =>
+      tipo === cliente.tipo &&
+      valor > minValor &&
+      anosCadastro >= minAnos
+  );
+
+  return regra ? valor * regra.taxa : 0;
 }
 
 module.exports = calcularDesconto;
